@@ -1,7 +1,7 @@
 import logging
 import sqlite3
 
-from flask import Flask, jsonify, g, request, redirect, render_template
+from flask import Flask, g, request, jsonify
 
 app = Flask(__name__)
 
@@ -40,17 +40,38 @@ with app.app_context():
              'runtime BIGINT(20) DEFAULT 0,'
              'experience BIGINT(20) DEFAULT 0,'
              'profit BIGINT(20) DEFAULT 0)')
+    query_db('CREATE TABLE IF NOT EXISTS runecrafter'
+             '(username TEXT PRIMARY KEY,'
+             'runtime BIGINT(20) DEFAULT 0,'
+             'experience BIGINT(20) DEFAULT 0,'
+             'profit BIGINT(20) DEFAULT 0)')
     get_db().commit()
 
 
 @app.route('/api/stats/fisher', methods=['PUT'])
 def update_fisher_stats():
+    data = request.get_json()
     try:
         query_db('INSERT INTO fisher (username, runtime, experience, profit)'
                  'VALUES (?, ?, ?, ?) ON CONFLICT (username) DO UPDATE SET '
                  'runtime = runtime + ?, experience = experience + ?, profit = profit + ?',
-                 [request.args['username'], int(request.args['runtime']), int(request.args['experience']), int(request.args['profit']),
-                  int(request.args['runtime']), int(request.args['experience']), int(request.args['profit'])])
+                 [data['username'], data['runtime'], data['experience'], data['profit'],
+                  data['runtime'], data['experience'], data['profit']])
+        get_db().commit()
+        return '', 200
+    except sqlite3.OperationalError as e:
+        return str(e), 500
+
+
+@app.route('/api/stats/runecrafter', methods=['PUT'])
+def update_runecrafter_stats():
+    data = request.get_json()
+    try:
+        query_db('INSERT INTO runecrafter (username, runtime, experience, profit)'
+                 'VALUES (?, ?, ?, ?) ON CONFLICT (username) DO UPDATE SET '
+                 'runtime = runtime + ?, experience = experience + ?, profit = profit + ?',
+                 [data['username'], data['runtime'], data['experience'], data['profit'],
+                  data['runtime'], data['experience'], data['profit']])
         get_db().commit()
         return '', 200
     except sqlite3.OperationalError as e:
