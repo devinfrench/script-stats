@@ -35,17 +35,101 @@ def close_connection(exception):
 
 
 with app.app_context():
+    query_db('CREATE TABLE IF NOT EXISTS agility'
+             '(username TEXT PRIMARY KEY,'
+             'runtime BIGINT(20) DEFAULT 0,'
+             'experience BIGINT(20) DEFAULT 0,'
+             'marks BIGINT(20) DEFAULT 0)')
+    query_db('CREATE TABLE IF NOT EXISTS cooker'
+             '(username TEXT PRIMARY KEY,'
+             'runtime BIGINT(20) DEFAULT 0,'
+             'experience BIGINT(20) DEFAULT 0)')
+    query_db('CREATE TABLE IF NOT EXISTS crafter'
+             '(username TEXT PRIMARY KEY,'
+             'runtime BIGINT(20) DEFAULT 0,'
+             'experience BIGINT(20) DEFAULT 0)')
     query_db('CREATE TABLE IF NOT EXISTS fisher'
              '(username TEXT PRIMARY KEY,'
              'runtime BIGINT(20) DEFAULT 0,'
              'experience BIGINT(20) DEFAULT 0,'
              'profit BIGINT(20) DEFAULT 0)')
+    query_db('CREATE TABLE IF NOT EXISTS miner'
+             '(username TEXT PRIMARY KEY,'
+             'runtime BIGINT(20) DEFAULT 0,'
+             'experience BIGINT(20) DEFAULT 0)')
     query_db('CREATE TABLE IF NOT EXISTS runecrafter'
              '(username TEXT PRIMARY KEY,'
              'runtime BIGINT(20) DEFAULT 0,'
              'experience BIGINT(20) DEFAULT 0,'
              'profit BIGINT(20) DEFAULT 0)')
+    query_db('CREATE TABLE IF NOT EXISTS smither'
+             '(username TEXT PRIMARY KEY,'
+             'runtime BIGINT(20) DEFAULT 0,'
+             'experience BIGINT(20) DEFAULT 0)')
+    query_db('CREATE TABLE IF NOT EXISTS tanner'
+             '(username TEXT PRIMARY KEY,'
+             'runtime BIGINT(20) DEFAULT 0,'
+             'tanned BIGINT(20) DEFAULT 0)')
+    query_db('CREATE TABLE IF NOT EXISTS tithefarm'
+             '(username TEXT PRIMARY KEY,'
+             'runtime BIGINT(20) DEFAULT 0,'
+             'experience BIGINT(20) DEFAULT 0,'
+             'points BIGINT(20) DEFAULT 0)')
+    query_db('CREATE TABLE IF NOT EXISTS wintertodt'
+             '(username TEXT PRIMARY KEY,'
+             'runtime BIGINT(20) DEFAULT 0,'
+             'experience BIGINT(20) DEFAULT 0,'
+             'crates BIGINT(20) DEFAULT 0)')
+    query_db('CREATE TABLE IF NOT EXISTS woodcutter'
+             '(username TEXT PRIMARY KEY,'
+             'runtime BIGINT(20) DEFAULT 0,'
+             'experience BIGINT(20) DEFAULT 0)')
     get_db().commit()
+
+
+@app.route('/api/stats/agility', methods=['PUT'])
+def update_agility_stats():
+    data = request.get_json()
+    try:
+        query_db('INSERT INTO agility (username, runtime, experience, marks)'
+                 'VALUES (?, ?, ?, ?) ON CONFLICT (username) DO UPDATE SET '
+                 'runtime = runtime + ?, experience = experience + ?, marks = marks + ?',
+                 [data['username'], data['runtime'], data['experience'], data['marks'],
+                  data['runtime'], data['experience'], data['marks']])
+        get_db().commit()
+        return '', 200
+    except sqlite3.OperationalError as e:
+        return str(e), 500
+
+
+@app.route('/api/stats/cooker', methods=['PUT'])
+def update_cooker_stats():
+    data = request.get_json()
+    try:
+        query_db('INSERT INTO cooker (username, runtime, experience)'
+                 'VALUES (?, ?, ?) ON CONFLICT (username) DO UPDATE SET '
+                 'runtime = runtime + ?, experience = experience + ?',
+                 [data['username'], data['runtime'], data['experience'],
+                  data['runtime'], data['experience']])
+        get_db().commit()
+        return '', 200
+    except sqlite3.OperationalError as e:
+        return str(e), 500
+
+
+@app.route('/api/stats/crafter', methods=['PUT'])
+def update_crafter_stats():
+    data = request.get_json()
+    try:
+        query_db('INSERT INTO crafter (username, runtime, experience)'
+                 'VALUES (?, ?, ?) ON CONFLICT (username) DO UPDATE SET '
+                 'runtime = runtime + ?, experience = experience + ?',
+                 [data['username'], data['runtime'], data['experience'],
+                  data['runtime'], data['experience']])
+        get_db().commit()
+        return '', 200
+    except sqlite3.OperationalError as e:
+        return str(e), 500
 
 
 @app.route('/api/stats/fisher', methods=['PUT'])
@@ -63,6 +147,21 @@ def update_fisher_stats():
         return str(e), 500
 
 
+@app.route('/api/stats/miner', methods=['PUT'])
+def update_miner_stats():
+    data = request.get_json()
+    try:
+        query_db('INSERT INTO miner (username, runtime, experience)'
+                 'VALUES (?, ?, ?) ON CONFLICT (username) DO UPDATE SET '
+                 'runtime = runtime + ?, experience = experience + ?',
+                 [data['username'], data['runtime'], data['experience'],
+                  data['runtime'], data['experience']])
+        get_db().commit()
+        return '', 200
+    except sqlite3.OperationalError as e:
+        return str(e), 500
+
+
 @app.route('/api/stats/runecrafter', methods=['PUT'])
 def update_runecrafter_stats():
     data = request.get_json()
@@ -72,6 +171,81 @@ def update_runecrafter_stats():
                  'runtime = runtime + ?, experience = experience + ?, profit = profit + ?',
                  [data['username'], data['runtime'], data['experience'], data['profit'],
                   data['runtime'], data['experience'], data['profit']])
+        get_db().commit()
+        return '', 200
+    except sqlite3.OperationalError as e:
+        return str(e), 500
+
+
+@app.route('/api/stats/smither', methods=['PUT'])
+def update_smither_stats():
+    data = request.get_json()
+    try:
+        query_db('INSERT INTO smither (username, runtime, experience)'
+                 'VALUES (?, ?, ?) ON CONFLICT (username) DO UPDATE SET '
+                 'runtime = runtime + ?, experience = experience + ?',
+                 [data['username'], data['runtime'], data['experience'],
+                  data['runtime'], data['experience']])
+        get_db().commit()
+        return '', 200
+    except sqlite3.OperationalError as e:
+        return str(e), 500
+
+
+@app.route('/api/stats/tanner', methods=['PUT'])
+def update_tanner_stats():
+    data = request.get_json()
+    try:
+        query_db('INSERT INTO tanner (username, runtime, tanned)'
+                 'VALUES (?, ?, ?) ON CONFLICT (username) DO UPDATE SET '
+                 'runtime = runtime + ?, tanned = tanned + ?',
+                 [data['username'], data['runtime'], data['tanned'],
+                  data['runtime'], data['tanned']])
+        get_db().commit()
+        return '', 200
+    except sqlite3.OperationalError as e:
+        return str(e), 500
+
+
+@app.route('/api/stats/tithefarm', methods=['PUT'])
+def update_tithefarm_stats():
+    data = request.get_json()
+    try:
+        query_db('INSERT INTO tithefarm (username, runtime, experience, points)'
+                 'VALUES (?, ?, ?, ?) ON CONFLICT (username) DO UPDATE SET '
+                 'runtime = runtime + ?, experience = experience + ?, points = points + ?',
+                 [data['username'], data['runtime'], data['experience'], data['points'],
+                  data['runtime'], data['experience'], data['points']])
+        get_db().commit()
+        return '', 200
+    except sqlite3.OperationalError as e:
+        return str(e), 500
+
+
+@app.route('/api/stats/wintertodt', methods=['PUT'])
+def update_wintertodt_stats():
+    data = request.get_json()
+    try:
+        query_db('INSERT INTO wintertodt (username, runtime, experience, crates)'
+                 'VALUES (?, ?, ?, ?) ON CONFLICT (username) DO UPDATE SET '
+                 'runtime = runtime + ?, experience = experience + ?, crates = crates + ?',
+                 [data['username'], data['runtime'], data['experience'], data['crates'],
+                  data['runtime'], data['experience'], data['crates']])
+        get_db().commit()
+        return '', 200
+    except sqlite3.OperationalError as e:
+        return str(e), 500
+
+
+@app.route('/api/stats/woodcutter', methods=['PUT'])
+def update_woodcutter_stats():
+    data = request.get_json()
+    try:
+        query_db('INSERT INTO woodcutter (username, runtime, experience)'
+                 'VALUES (?, ?, ?) ON CONFLICT (username) DO UPDATE SET '
+                 'runtime = runtime + ?, experience = experience + ?',
+                 [data['username'], data['runtime'], data['experience'],
+                  data['runtime'], data['experience']])
         get_db().commit()
         return '', 200
     except sqlite3.OperationalError as e:
